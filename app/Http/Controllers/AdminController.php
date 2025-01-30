@@ -15,4 +15,8 @@ class AdminController extends Controller
     $brands = $brand->orderBy("id","desc")->paginate(15);
     return view('admin.brands', compact('brands'));
    }
+
+   public function add_brand(){
+    return view("admin.brand-add");
+   }
 }
