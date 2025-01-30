@@ -29,26 +29,32 @@
         </div>
         <!-- new-category -->
         <div class="wg-box">
-            <form class="form-new-product form-style-1" action="#" method="POST"
+            <form class="form-new-product form-style-1" action="{{route('admin.brand.store')}}" method="POST"
                 enctype="multipart/form-data">
                 @csrf
-                
+
                 <fieldset class="name">
                     <div class="body-title">Brand Name <span class="tf-color-1">*</span></div>
                     <input class="flex-grow" type="text" placeholder="Brand name" name="name"
-                        tabindex="0" value="" aria-required="true" required="">
+                        tabindex="0" value="{{old('name')}}" aria-required="true" required="">
                 </fieldset>
+                @error('name') 
+                <span class="alert alert-danger text-center">{{$message}}</span>
+                @enderror
                 <fieldset class="name">
                     <div class="body-title">Brand Slug <span class="tf-color-1">*</span></div>
                     <input class="flex-grow" type="text" placeholder="Brand Slug" name="slug"
-                        tabindex="0" value="" aria-required="true" required="">
+                        tabindex="0" value="{{old('slug')}}" aria-required="true" required="">
                 </fieldset>
+                @error('slug') 
+                <span class="alert alert-danger text-center">{{$message}}</span>
+                @enderror
                 <fieldset>
                     <div class="body-title">Upload images <span class="tf-color-1">*</span>
                     </div>
                     <div class="upload-image flex-grow">
                         <div class="item" id="imgpreview" style="display:none">
-                            <img src="upload-1.html" class="effect8" alt="">
+                            <img src="" alt="Image Preview" style="max-width: 200px; margin-top: 10px;">
                         </div>
                         <div id="upload-file" class="item up-load">
                             <label class="uploadfile" for="myFile">
@@ -62,6 +68,9 @@
                         </div>
                     </div>
                 </fieldset>
+                @error('image') 
+                <span class="alert alert-danger text-center">{{$message}}</span>
+                @enderror
 
                 <div class="bot">
                     <div></div>
@@ -73,3 +82,27 @@
 </div>
 
 @endsection
+@push('scripts')
+<script>
+    $(document).ready(function(){
+        // Pratinjau gambar saat file diunggah
+        $("input[name='image']").on("change", function(){
+            var file = this.files[0];
+            if (file) {
+                $("#imgpreview img").attr("src", URL.createObjectURL(file));
+                $("#imgpreview").show();
+            }
+        });
+
+        // Mengisi nilai slug saat input name berubah
+        $("input[name='name']").on("input", function(){
+            var name = $(this).val();
+            $("input[name='slug']").val(StringToSlug(name));
+        });
+    });
+
+    function StringToSlug(Text){
+        return Text.toLowerCase().replace(/ /g, '-').replace(/[^\w-]+/g, '');
+    }
+</script>
+@endpush
