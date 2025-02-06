@@ -111,26 +111,30 @@ class AdminController extends Controller
         $img->save($destinationPath . '/' . $imageName); // Menyimpan gambar yang telah diubah ukurannya
     }
 
-    public function brand_delete($id){
+    public function brand_delete($id)
+    {
         $brand = Brand::find($id);
-        if(File::exists(public_path('uploads/brands/' . $brand->image))){
+        if (File::exists(public_path('uploads/brands/' . $brand->image))) {
             File::delete(public_path('uploads/brands/' . $brand->image));
         }
         $brand->delete();
         return redirect()->route('admin.brands')->with('status', 'Brand has been deleted!');
     }
 
-    public function categories(Category $category){
+    public function categories(Category $category)
+    {
         $categories = $category->orderBy('id', 'ASC')->paginate(15);
         return view('admin.categories', compact('categories'));
     }
 
-    public function category_add (){
+    public function category_add()
+    {
         return view('admin.category-add');
     }
 
-    public function category_store (Request $request) {
-      
+    public function category_store(Request $request)
+    {
+
         // Validasi input
         $request->validate([
             'name' => ['required', 'string', 'max:255'],
@@ -162,9 +166,52 @@ class AdminController extends Controller
         return redirect()->route('admin.categories')->with('status', 'Category has been added successfully!');
     }
 
-    public function category_edit($id){
+    public function category_edit($id)
+    {
         $category = Category::find($id);
         return view('admin.category-edit', compact('category'));
+    }
+
+    public function category_update(Request $request)
+    {
+        $request->validate([
+            'name' => ['required', 'string', 'max:255'],
+            'slug' => ['required', 'unique:categories,slug,' . $request->id],
+            'image' => ['mimes:jpeg,jpg,png', 'max:2048']
+        ]);
+
+        $category = Category::find($request->id);
+        $category->name = $request->name;
+        $category->slug = Str::slug($request->name);
+        if ($request->hasFile('image')) {
+
+            if (File::exists(public_path('uploads/categories/' . $category->image))) {
+                File::delete(public_path('uploads/categories/' . $category->image));
+            }
+            $image = $request->file('image'); // Mengambil file gambar dari request
+            $file_extension = $image->extension(); // Mendapatkan ekstensi file gambar
+            $file_name = Carbon::now()->timestamp . '.' . $file_extension; // Membuat nama file unik
+            $image->move(public_path('uploads/categories'), $file_name); // Memindahkan file gambar ke direktori yang ditentukan
+            $category->image = $file_name; // Menyimpan nama file di atribut image dari objek Brand
+
+            // Membuat thumbnail
+            $this->GenerateBrandThumbnailsImage(public_path('uploads/categories') . '/' . $file_name, $file_name);
+        }
+
+        // Menyimpan Brand ke database
+        $category->save();
+
+        // Mengalihkan dengan pesan sukses
+        return redirect()->route('admin.categories')->with('status', 'Brand has been edited!');
+    }
+
+    public function category_delete($id){
+        $category = Category::find($id);
+        if (File::exists(public_path('uploads/categories/' . $category->image))) {
+            File::delete(public_path('uploads/categories/' . $category->image));
+        }
+        $category->delete();
+        return redirect()->route('admin.categories')->with('status', 'Category has been deleted!');
     }
 
     public function GenerateCategoryThumbnailsImage($imagePath, $imageName)
@@ -176,6 +223,4 @@ class AdminController extends Controller
         });
         $img->save($destinationPath . '/' . $imageName); // Menyimpan gambar yang telah diubah ukurannya
     }
-
-
 }
