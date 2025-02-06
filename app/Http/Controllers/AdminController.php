@@ -121,12 +121,61 @@ class AdminController extends Controller
     }
 
     public function categories(Category $category){
-        $categories = $category->orderBy('id', 'desc')->paginate(15);
+        $categories = $category->orderBy('id', 'ASC')->paginate(15);
         return view('admin.categories', compact('categories'));
     }
 
-    public function     category_add (){
+    public function category_add (){
         return view('admin.category-add');
     }
+
+    public function category_store (Request $request) {
+      
+        // Validasi input
+        $request->validate([
+            'name' => ['required', 'string', 'max:255'],
+            'slug' => ['required', 'unique:categories,slug'],
+            'image' => ['mimes:jpeg,jpg,png', 'max:2048']
+        ]);
+
+        // Membuat objek Brand baru
+        $category = new Category();
+        $category->name = $request->name;
+        $category->slug = Str::slug($request->name);
+
+        // Mengunggah gambar jika ada
+        if ($request->hasFile('image')) {
+            $image = $request->file('image'); // Mengambil file gambar dari request
+            $file_extension = $image->extension(); // Mendapatkan ekstensi file gambar
+            $file_name = Carbon::now()->timestamp . '.' . $file_extension; // Membuat nama file unik
+            $image->move(public_path('uploads/categories'), $file_name); // Memindahkan file gambar ke direktori yang ditentukan
+            $category->image = $file_name; // Menyimpan nama file di atribut image dari objek category
+
+            // Membuat thumbnail
+            $this->GenerateCategoryThumbnailsImage(public_path('uploads/categories') . '/' . $file_name, $file_name);
+        }
+
+        // Menyimpan category ke database
+        $category->save();
+
+        // Mengalihkan dengan pesan sukses
+        return redirect()->route('admin.categories')->with('status', 'Category has been added successfully!');
+    }
+
+    public function category_edit($id){
+        $category = Category::find($id);
+        return view('admin.category-edit', compact('category'));
+    }
+
+    public function GenerateCategoryThumbnailsImage($imagePath, $imageName)
+    {
+        $destinationPath = public_path('uploads/categories'); // Path tujuan
+        $img = Image::make($imagePath); // Membaca gambar yang diunggah
+        $img->fit(124, 124, function ($constraint) { // Mengubah ukuran dan memotong gambar
+            $constraint->upsize();
+        });
+        $img->save($destinationPath . '/' . $imageName); // Menyimpan gambar yang telah diubah ukurannya
+    }
+
 
 }

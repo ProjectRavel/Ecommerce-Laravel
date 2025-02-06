@@ -96,7 +96,7 @@
                                     </ul>
                                 </li>
                                 <li class="menu-item has-children">
-                                    <a href="{{route('admin.categories')}}" class="menu-item-button">
+                                    <a class="menu-item-button">
                                         <div class="icon"><i class="icon-layers"></i></div>
                                         <div class="text">Category</div>
                                     </a>
@@ -107,7 +107,7 @@
                                             </a>
                                         </li>
                                         <li class="sub-menu-item">
-                                            <a href="categories.html" class="">
+                                            <a href="{{route('admin.categories')}}" class="">
                                                 <div class="text">Categories</div>
                                             </a>
                                         </li>
