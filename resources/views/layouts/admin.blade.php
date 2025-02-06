@@ -96,13 +96,13 @@
                                     </ul>
                                 </li>
                                 <li class="menu-item has-children">
-                                    <a href="javascript:void(0);" class="menu-item-button">
+                                    <a href="{{route('admin.categories')}}" class="menu-item-button">
                                         <div class="icon"><i class="icon-layers"></i></div>
                                         <div class="text">Category</div>
                                     </a>
                                     <ul class="sub-menu">
                                         <li class="sub-menu-item">
-                                            <a href="add-category.html" class="">
+                                            <a href="{{route('admin.category.add')}}" class="">
                                                 <div class="text">New Category</div>
                                             </a>
                                         </li>

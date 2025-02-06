@@ -120,9 +120,13 @@ class AdminController extends Controller
         return redirect()->route('admin.brands')->with('status', 'Brand has been deleted!');
     }
 
-    public function categories(){
-        $categories = Category::orderBy('id', 'DESC');
+    public function categories(Category $category){
+        $categories = $category->orderBy('id', 'desc')->paginate(15);
         return view('admin.categories', compact('categories'));
+    }
+
+    public function     category_add (){
+        return view('admin.category-add');
     }
 
 }

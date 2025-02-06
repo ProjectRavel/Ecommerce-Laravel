@@ -53,7 +53,8 @@
                             </tr>
                         </thead>
                         <tbody>
-                            @foreach ($categories as $category)     
+                          
+                            @foreach ($categories as $category)
                                 <tr>
                                     <td>{{$category->id}}</td>
                                     <td class="pname">
@@ -74,7 +75,7 @@
                                                     <i class="icon-edit-3"></i>
                                                 </div>
                                             </a>
-                                            <form action="{{ route('admin.category.delete', $category->id) }}" method="POST" class="d-inline delete-form">
+                                            <form action="#" method="POST" class="d-inline delete-form">
                                                 @csrf
                                                 @method('DELETE')
                                                 <a type="button" class="item text-danger delete">
@@ -90,7 +91,6 @@
                 </div>
                 <div class="divider"></div>
                 <div class="flex items-center justify-between flex-wrap gap10 wgp-pagination">
-                    {{$categorys->links('pagination::bootstrap-5')}}
                 </div>
             </div>
         </div>
