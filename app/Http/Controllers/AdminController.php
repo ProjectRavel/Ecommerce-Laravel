@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Brand;
+use App\Models\Product;
 use App\Models\Category;
 use Illuminate\Support\Str;
 use Illuminate\Http\Request;
@@ -222,5 +223,10 @@ class AdminController extends Controller
             $constraint->upsize();
         });
         $img->save($destinationPath . '/' . $imageName); // Menyimpan gambar yang telah diubah ukurannya
+    }
+
+    public function products(){
+        $products = Product::orderBy('id', 'desc')->paginate(15);
+        return view('admin.products', compact('products'));
     }
 }
