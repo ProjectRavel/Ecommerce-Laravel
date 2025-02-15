@@ -30,8 +30,8 @@
         </div>
         <!-- form-add-product -->
         <form class="tf-section-2 form-add-product" method="POST" enctype="multipart/form-data"
-            action="http://localhost:8000/admin/product/store">
-            <input type="hidden" name="_token" value="8LNRTO4LPXHvbK2vgRcXqMeLgqtqNGjzWSNru7Xx" autocomplete="off">
+            action="{{route('admin.product.store')}}">       
+            @csrf
             <div class="wg-box">
                 <fieldset class="name">
                     <div class="body-title mb-10">Product name <span class="tf-color-1">*</span>
