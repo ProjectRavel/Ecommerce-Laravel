@@ -228,7 +228,7 @@ class AdminController extends Controller
 
     public function products()
     {
-        $products = Product::orderBy('id', 'desc')->paginate(15);
+        $products = Product::orderBy('id', 'ASC')->paginate(15);
         return view('admin.products', compact('products'));
     }
 
@@ -274,6 +274,7 @@ class AdminController extends Controller
 
         $current_timestamp = Carbon::now()->timestamp;
 
+
         if ($request->hasFile('image')) {
             $image = $request->file('image');
             $imageName = $current_timestamp . '.' . $image->extension();
@@ -289,7 +290,7 @@ class AdminController extends Controller
             $allowedFileExtension = ['jpg', 'png', 'jpeg'];
             $files = $request->file('images');
             foreach ($files as $file) {
-                $gextension = $file->getClientOriginalExtension();
+                $gextension = $file->extension(); //
                 $gcheck = in_array($gextension, $allowedFileExtension);
                 if ($gcheck) {
                     $gfileName = $current_timestamp . "-" . $counter . "." . $gextension;
@@ -297,7 +298,7 @@ class AdminController extends Controller
                     array_push($gallery_arr, $gfileName);
                     $counter++;
                 }
-            }
+            }   
             $gallery_image = implode(',', $gallery_arr);
         }
         $product->images = $gallery_image;
@@ -317,5 +318,12 @@ class AdminController extends Controller
         $img->fit(104, 104, function ($constraint) { // Mengubah ukuran dan memotong gambar
             $constraint->upsize();
         })->save($destinationPathThumbnail . '/' . $imageName); // Menyimpan gambar yang telah diubah ukurannya
+    }
+
+    public function product_edit($id){
+        $product = Product::find($id);
+        $brands = Brand::select('id', 'name')->orderBy('name')->get();
+        $categories = Category::select('id', 'name')->orderBy('name')->get();
+        return view('admin.product-edit', compact('product', 'brands', 'categories'));
     }
 }
