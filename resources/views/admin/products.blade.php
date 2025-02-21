@@ -62,7 +62,7 @@
                                         <img src="{{asset('uploads/products/thumbnails')}}/{{$product->image}}" alt="{{$product->name}}" class="image">
                                     </div>
                                     <div class="name">
-                                        <a href="#" class="body-title-2">{{$product->name}}/a>
+                                        <a href="#" class="body-title-2">{{$product->name}}</a>
                                         <div class="text-tiny mt-3">{{$product->slug}}</div>
                                     </div>
                                 </td>
@@ -81,7 +81,7 @@
                                                 <i class="icon-eye"></i>
                                             </div>
                                         </a>
-                                        <a href="#">
+                                        <a href="{{route('admin.product.edit', $product->id)}}">
                                             <div class="item edit">
                                                 <i class="icon-edit-3"></i>
                                             </div>
