@@ -102,7 +102,7 @@
                     </div>
                     <div class="upload-image flex-grow">
                         <div class="item" id="imgpreview" style="display:none">
-                            <img src="../../../localhost_8000/images/upload/upload-1.png" class="effect8" alt="">
+                            <img src="" class="effect8" alt="">
                         </div>
                         <div id="upload-file" class="item up-load">
                             <label class="uploadfile" for="myFile">
@@ -117,23 +117,22 @@
                     </div>
                 </fieldset>
 
+                
                 <fieldset>
                     <div class="body-title mb-10">Upload Gallery Images</div>
                     <div class="upload-image mb-16">
-                        <!-- <div class="item">
-        <img src="images/upload/upload-1.png" alt="">
-    </div>                                                 -->
+                        <div id="gallery-preview" class="flex-grow"></div>
                         <div id="galUpload" class="item up-load">
                             <label class="uploadfile" for="gFile">
                                 <span class="icon">
                                     <i class="icon-upload-cloud"></i>
                                 </span>
-                                <span class="text-tiny">Drop your images here or select <span class="tf-color">click to
-                                        browse</span></span>
+                                <span class="text-tiny">Drop your images here or select <span class="tf-color">click to browse</span></span>
                                 <input type="file" id="gFile" name="images[]" accept="image/*" multiple="">
                             </label>
                         </div>
                     </div>
+                    <div id="gallery-error" class="text-danger" style="display:none;">You can only upload a maximum of 2 images.</div>
                 </fieldset>
 
                 <div class="cols gap22">
@@ -195,3 +194,48 @@
     <!-- /main-content-wrap -->
 </div>  
 @endsection
+
+@push('scripts')
+<script>
+      $(document).ready(function(){
+        // Pratinjau gambar saat file diunggah
+        $("input[name='image']").on("change", function(){
+            var file = this.files[0];
+            if (file) {
+                $("#imgpreview img").attr("src", URL.createObjectURL(file));
+                $("#imgpreview").show();
+            }
+        });
+
+        // Pratinjau gambar galeri saat file diunggah
+        $("input[name='images[]']").on("change", function(){
+            $("#gallery-preview").empty();
+            $("#gallery-error").hide();
+            var files = this.files;
+            if (files.length > 2) {
+                $("#gallery-error").show();
+                this.value = ""; // Clear the input
+            } else {
+                $.each(files, function(index, file){
+                    var reader = new FileReader();
+                    reader.onload = function(e){
+                        var img = $('<img>').attr('src', e.target.result).css('max-width', '100px').css('margin', '10px');
+                        $("#gallery-preview").append(img);
+                    }
+                    reader.readAsDataURL(file);
+                });
+            }
+        });
+
+        // Mengisi nilai slug saat input name berubah
+        $("input[name='name']").on("input", function(){
+            var name = $(this).val();
+            $("input[name='slug']").val(StringToSlug(name));
+        });
+    });
+
+    function StringToSlug(Text){
+        return Text.toLowerCase().replace(/ /g, '-').replace(/[^\w-]+/g, '');
+    }
+</script>
+@endpush
