@@ -86,13 +86,16 @@
                                                 <i class="icon-edit-3"></i>
                                             </div>
                                         </a>
-                                        <form action="#" method="POST">
-                                            <div class="item text-danger delete">
+                                        <form action="{{route('admin.product.delete', ['id'=>$product->id])}}" class="delete-form d-inline" method="POST">
+                                            @csrf
+                                            @method('DELETE')
+                                            <a type="button" class="item text-danger delete">
                                                 <i class="icon-trash-2"></i>
-                                            </div>
+                                            </a>
                                         </form>
                                     </div>
                                 </td>
+                                
                             </tr>
                         @endforeach
 
@@ -110,3 +113,28 @@
 </div>
 
 @endsection
+@push('scripts')
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script>
+    $(document).ready(function() {
+    // Tambahkan event listener untuk tombol delete
+    $('.delete').on('click', function() {
+        var form = $(this).closest('.delete-form');
+        Swal.fire({
+            title: 'Are you sure?',
+            text: "You won't be able to revert this!",
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#3085d6',
+            cancelButtonColor: '#d33',
+            confirmButtonText: 'Yes, delete it!'
+        }).then((result) => {
+            if (result.isConfirmed) {
+                form.submit();
+            }
+        });
+    });
+});
+</script>
+@endpush
